@@ -369,7 +369,7 @@ function startCountdown() {
 
     const delay2 = startDelay + getRandomCountdownDelay();
     game.countdownTimers.push(setTimeout(() => {
-        if (game.phase !== GamePhase.GAME_OVER) {
+        if (game.phase === GamePhase.COUNTDOWN_3) { // 반드시 3일 때만 2로
             game.phase = GamePhase.COUNTDOWN_2;
             updateCountdown('2');
         }
@@ -377,7 +377,7 @@ function startCountdown() {
 
     const delay3 = delay2 + getRandomCountdownDelay();
     game.countdownTimers.push(setTimeout(() => {
-        if (game.phase !== GamePhase.GAME_OVER) {
+        if (game.phase === GamePhase.COUNTDOWN_2) { // 반드시 2일 때만 1로
             game.phase = GamePhase.COUNTDOWN_1;
             updateCountdown('1');
         }
@@ -385,7 +385,7 @@ function startCountdown() {
 
     const delayGo = delay3 + getRandomCountdownDelay();
     game.countdownTimers.push(setTimeout(() => {
-        if (game.phase !== GamePhase.GAME_OVER) {
+        if (game.phase === GamePhase.COUNTDOWN_1) { // 반드시 1일 때만 GO로
             game.phase = GamePhase.GO;
             updateCountdown('GO!', true);
             updateMessage('');
@@ -536,6 +536,12 @@ function showShotEffect(playerNum, type, damage = 0) {
     const shooterDom = DOM.players[playerNum];
     const targetDom = DOM.players[targetNum];
 
+    // 슈터 이모지 효과
+    shooterDom.emoji.classList.remove('shooting');
+    void shooterDom.emoji.offsetWidth;
+    shooterDom.emoji.classList.add('shooting');
+    setTimeout(() => shooterDom.emoji.classList.remove('shooting'), 300);
+
     shooterDom.shot.textContent = type === 'clean' ? '💥' : '💨';
     shooterDom.shot.className = 'shot-indicator';
     void shooterDom.shot.offsetWidth;
@@ -546,16 +552,22 @@ function showShotEffect(playerNum, type, damage = 0) {
     DOM.container.classList.add('shake');
     setTimeout(() => DOM.container.classList.remove('shake'), 500);
 
+    // 타겟 섹션 및 이모지 효과
     targetDom.section.classList.remove('hit');
     void targetDom.section.offsetWidth;
     targetDom.section.classList.add('hit');
     setTimeout(() => targetDom.section.classList.remove('hit'), 400);
 
+    targetDom.emoji.classList.remove('hit');
+    void targetDom.emoji.offsetWidth;
+    targetDom.emoji.classList.add('hit');
+    setTimeout(() => targetDom.emoji.classList.remove('hit'), 500);
+
     if (damage > 0) {
         targetDom.damage.textContent = `-${damage}`;
-        targetDom.damage.classList.remove('show');
+        targetDom.damage.className = 'damage-popup';
         void targetDom.damage.offsetWidth;
-        targetDom.damage.classList.add('show');
+        targetDom.damage.classList.add('show', type); // clean 또는 dirty 클래스 추가
     }
 
     DOM.flash.classList.remove('flash-clean', 'flash-dirty');
