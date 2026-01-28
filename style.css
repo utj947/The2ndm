@@ -79,10 +79,12 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: opacity 0.3s;
 }
 
 .rules-btn.hidden {
-    display: none;
+    opacity: 0;
+    pointer-events: none;
 }
 
 /* 룰 오버레이 */
@@ -435,13 +437,14 @@ body {
     transform: rotate(180deg);
 }
 
-/* 카운트다운 숫자 - 크게! */
+/* 카운트다운 숫자 - 반응형 크기 */
 .countdown {
-    font-size: 3.5rem;
+    font-size: min(12vw, 3.5rem);
     font-weight: 700;
     color: #e8d5b7;
     text-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
     line-height: 1;
+    white-space: nowrap;
 }
 
 .countdown.go {
@@ -511,9 +514,11 @@ body {
 }
 
 .start-button:disabled {
-    background: #666;
-    color: #999;
-    box-shadow: 0 2px 0 #333;
+    background: #444;
+    color: #888;
+    box-shadow: 0 2px 0 #222;
+    cursor: not-allowed;
+    transform: none;
 }
 
 /* GO 타이머 */

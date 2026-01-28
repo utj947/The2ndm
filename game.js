@@ -359,6 +359,7 @@ function startCountdown() {
         updateCountdown('3');
         updateMessage('');
         updateFireButtons();
+        updateStartButton(); // 버튼 상태 업데이트
     }, startDelay));
 
     const delay2 = startDelay + getRandomCountdownDelay();
