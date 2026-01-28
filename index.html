@@ -13,15 +13,35 @@
     <div class="game-container">
         <!-- ========== 상단: 상대편 영역 (전체 180도 회전) ========== -->
         <div class="player-section opponent-section">
+            <!-- 룰 버튼 (왼쪽 상단) -->
+            <button class="rules-btn" id="rules-btn2">📜</button>
+
+            <!-- 룰 오버레이 -->
+            <div class="rules-overlay" id="rules-overlay2">
+                <div class="rules-content">
+                    <h2>🤠 결투 규칙</h2>
+                    <ul>
+                        <li><b>클린샷:</b> GO! 후 발사 → 30 데미지</li>
+                        <li><b>더티샷:</b> GO! 전 발사 → 10~20 데미지</li>
+                        <li><b>스턴:</b> 피격 시 2초간 발사 불가</li>
+                        <li><b>승리:</b> 상대 HP를 0으로!</li>
+                    </ul>
+                    <button class="close-rules-btn" id="close-rules2">닫기</button>
+                </div>
+            </div>
+
             <!-- 왼쪽: 플레이어 정보 -->
             <div class="player-info">
-                <span class="player-label">PLAYER 2</span>
+                <div class="name-row">
+                    <span class="player-label" id="player2-name">PLAYER 2</span>
+                    <button class="edit-btn" id="edit-btn2">✏️</button>
+                </div>
                 <div class="cowboy" id="player2-emoji">🤠</div>
                 <div class="hp-bar">
                     <div class="hp-fill" id="hp2"></div>
                     <span class="hp-text" id="hp2-text">100</span>
                 </div>
-                <div class="stun-container">
+                <div class="stun-container" id="stun-container2">
                     <div class="stun-indicator" id="stun2">😵 STUNNED</div>
                     <div class="stun-gauge">
                         <div class="stun-bar" id="stun-bar2"></div>
@@ -64,15 +84,35 @@
 
         <!-- ========== 하단: 내 영역 ========== -->
         <div class="player-section my-section">
+            <!-- 룰 버튼 (왼쪽 상단) -->
+            <button class="rules-btn" id="rules-btn1">📜</button>
+
+            <!-- 룰 오버레이 -->
+            <div class="rules-overlay" id="rules-overlay1">
+                <div class="rules-content">
+                    <h2>🤠 결투 규칙</h2>
+                    <ul>
+                        <li><b>클린샷:</b> GO! 후 발사 → 30 데미지</li>
+                        <li><b>더티샷:</b> GO! 전 발사 → 10~20 데미지</li>
+                        <li><b>스턴:</b> 피격 시 2초간 발사 불가</li>
+                        <li><b>승리:</b> 상대 HP를 0으로!</li>
+                    </ul>
+                    <button class="close-rules-btn" id="close-rules1">닫기</button>
+                </div>
+            </div>
+
             <!-- 왼쪽: 플레이어 정보 -->
             <div class="player-info">
-                <span class="player-label">PLAYER 1</span>
+                <div class="name-row">
+                    <span class="player-label" id="player1-name">PLAYER 1</span>
+                    <button class="edit-btn" id="edit-btn1">✏️</button>
+                </div>
                 <div class="cowboy" id="player1-emoji">🤠</div>
                 <div class="hp-bar">
                     <div class="hp-fill" id="hp1"></div>
                     <span class="hp-text" id="hp1-text">100</span>
                 </div>
-                <div class="stun-container">
+                <div class="stun-container" id="stun-container1">
                     <div class="stun-indicator" id="stun1">😵 STUNNED</div>
                     <div class="stun-gauge">
                         <div class="stun-bar" id="stun-bar1"></div>
@@ -91,6 +131,34 @@
                 <h1 id="winner-text">VICTORY</h1>
                 <p id="winner-player">Player 1 승리!</p>
                 <button id="restart-btn">🔄 다시 결투!</button>
+            </div>
+        </div>
+
+        <!-- 편집 모달 -->
+        <div class="edit-modal" id="edit-modal">
+            <div class="edit-modal-content">
+                <h3>플레이어 설정</h3>
+                <label>이름:</label>
+                <input type="text" id="edit-name" maxlength="10" placeholder="이름 입력">
+                <label>이모티콘:</label>
+                <div class="emoji-picker" id="emoji-picker">
+                    <span class="emoji-option">🤠</span>
+                    <span class="emoji-option">😎</span>
+                    <span class="emoji-option">🤡</span>
+                    <span class="emoji-option">👺</span>
+                    <span class="emoji-option">🐶</span>
+                    <span class="emoji-option">🐱</span>
+                    <span class="emoji-option">🦊</span>
+                    <span class="emoji-option">🐻</span>
+                    <span class="emoji-option">👻</span>
+                    <span class="emoji-option">🤖</span>
+                    <span class="emoji-option">👽</span>
+                    <span class="emoji-option">💀</span>
+                </div>
+                <div class="edit-modal-buttons">
+                    <button id="edit-save">저장</button>
+                    <button id="edit-cancel">취소</button>
+                </div>
             </div>
         </div>
 

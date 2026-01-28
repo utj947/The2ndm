@@ -1,6 +1,6 @@
 /* ============================================
    The2nd - 모바일 버전 스타일
-   새 레이아웃: 좌우 분할 + 큰 카운트다운
+   새 레이아웃: 좌우 분할 + 큰 카운트다운 + 룰/편집
    ============================================ */
 
 * {
@@ -61,56 +61,140 @@ body {
     background: linear-gradient(0deg, rgba(139, 69, 19, 0.3) 0%, transparent 100%);
 }
 
-/* 플레이어 정보 (왼쪽) */
+/* ============================================
+   룰 버튼 (왼쪽 상단)
+   ============================================ */
+.rules-btn {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    width: 32px;
+    height: 32px;
+    font-size: 1.2rem;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid #ffd700;
+    border-radius: 6px;
+    cursor: pointer;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.rules-btn.hidden {
+    display: none;
+}
+
+/* 룰 오버레이 */
+.rules-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.95);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    border-radius: 5px;
+}
+
+.rules-overlay.show {
+    display: flex;
+}
+
+.rules-content {
+    text-align: center;
+    padding: 15px;
+}
+
+.rules-content h2 {
+    font-size: 1.3rem;
+    color: #ffd700;
+    margin-bottom: 10px;
+}
+
+.rules-content ul {
+    list-style: none;
+    text-align: left;
+    font-size: 0.8rem;
+    line-height: 1.6;
+}
+
+.rules-content li {
+    margin-bottom: 5px;
+}
+
+.close-rules-btn {
+    margin-top: 10px;
+    padding: 8px 20px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    font-family: inherit;
+    background: #ffd700;
+    color: #333;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* ============================================
+   플레이어 정보 (왼쪽)
+   ============================================ */
 .player-info {
     flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 4px;
+    gap: 5px;
     position: relative;
 }
 
+.name-row {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
 .player-label {
-    font-size: 0.75rem;
+    font-size: 0.9rem;
     font-weight: 700;
     color: #ffd700;
     letter-spacing: 1px;
 }
 
+.edit-btn {
+    width: 24px;
+    height: 24px;
+    font-size: 0.8rem;
+    background: transparent;
+    border: 1px solid #ffd700;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.edit-btn.hidden {
+    display: none;
+}
+
 .cowboy {
-    font-size: 2.5rem;
-    filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.4));
+    font-size: 3.2rem;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
+    transition: transform 0.1s;
 }
 
-.player-section.stunned .cowboy {
-    animation: shake 0.1s infinite;
-}
-
-@keyframes shake {
-
-    0%,
-    100% {
-        transform: translateX(0);
-    }
-
-    25% {
-        transform: translateX(-3px);
-    }
-
-    75% {
-        transform: translateX(3px);
-    }
-}
-
-/* HP 바 */
+/* HP 바 - 크게 */
 .hp-bar {
     width: 100%;
-    max-width: 100px;
-    height: 14px;
+    max-width: 120px;
+    height: 18px;
     background: rgba(0, 0, 0, 0.5);
     border: 2px solid #8b4513;
-    border-radius: 7px;
+    border-radius: 9px;
     overflow: hidden;
     position: relative;
 }
@@ -145,34 +229,46 @@ body {
     left: 50%;
     transform: translate(-50%, -50%);
     font-weight: 700;
-    font-size: 0.65rem;
+    font-size: 0.75rem;
     text-shadow: 1px 1px 2px black;
 }
 
-/* 스턴 표시 */
+/* 스턴 컨테이너 - 스턴시에만 표시 */
 .stun-container {
-    display: flex;
+    display: none;
     flex-direction: column;
     align-items: center;
-    gap: 2px;
-    min-height: 22px;
+    gap: 3px;
+}
+
+.stun-container.show {
+    display: flex;
 }
 
 .stun-indicator {
-    font-size: 0.7rem;
+    font-size: 0.85rem;
     color: #ff6b35;
     font-weight: 700;
-    opacity: 0;
-    transition: opacity 0.2s;
+    animation: stunPulse 0.3s ease-in-out infinite;
 }
 
-.stun-indicator.show {
-    opacity: 1;
+@keyframes stunPulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.1);
+        opacity: 0.8;
+    }
 }
 
 .stun-gauge {
-    width: 80px;
-    height: 5px;
+    width: 90px;
+    height: 6px;
     background: rgba(0, 0, 0, 0.5);
     border-radius: 3px;
     overflow: hidden;
@@ -185,10 +281,10 @@ body {
     transition: width 0.05s linear;
 }
 
-/* 발사 이펙트 */
+/* 발사/데미지 이펙트 */
 .shot-indicator {
     position: absolute;
-    font-size: 2rem;
+    font-size: 2.5rem;
     opacity: 0;
     pointer-events: none;
 }
@@ -209,7 +305,7 @@ body {
 
     100% {
         opacity: 0;
-        transform: scale(2.5);
+        transform: scale(3);
     }
 }
 
@@ -221,13 +317,13 @@ body {
 
     100% {
         opacity: 0;
-        transform: scale(1.8) rotate(20deg);
+        transform: scale(2) rotate(20deg);
     }
 }
 
 .damage-popup {
     position: absolute;
-    font-size: 1.5rem;
+    font-size: 1.8rem;
     font-weight: 700;
     color: #ff0000;
     opacity: 0;
@@ -246,12 +342,12 @@ body {
     }
 
     50% {
-        transform: translateY(-10px) scale(1.2);
+        transform: translateY(-15px) scale(1.3);
     }
 
     100% {
         opacity: 0;
-        transform: translateY(-20px) scale(1);
+        transform: translateY(-25px) scale(1);
     }
 }
 
@@ -261,7 +357,7 @@ body {
 .fire-button {
     flex: 1;
     height: 100%;
-    font-size: 2.2rem;
+    font-size: 2.5rem;
     font-weight: 700;
     font-family: inherit;
     border: none;
@@ -279,8 +375,8 @@ body {
 .fire-button.active {
     background: linear-gradient(180deg, #ff4444 0%, #cc0000 100%);
     color: white;
-    box-shadow: 0 0 20px rgba(255, 68, 68, 0.7), 0 5px 0 #5c0a0a;
-    animation: fireReady 0.5s ease-in-out infinite;
+    box-shadow: 0 0 25px rgba(255, 68, 68, 0.8), 0 5px 0 #5c0a0a;
+    animation: fireReady 0.4s ease-in-out infinite;
 }
 
 @keyframes fireReady {
@@ -291,7 +387,7 @@ body {
     }
 
     50% {
-        transform: scale(1.03);
+        transform: scale(1.02);
     }
 }
 
@@ -321,7 +417,7 @@ body {
     justify-content: space-between;
     z-index: 10;
     flex-shrink: 0;
-    min-height: 100px;
+    min-height: 110px;
 }
 
 /* 카운트다운 영역 (좌/우) */
@@ -341,7 +437,7 @@ body {
 
 /* 카운트다운 숫자 - 크게! */
 .countdown {
-    font-size: 3rem;
+    font-size: 3.5rem;
     font-weight: 700;
     color: #e8d5b7;
     text-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
@@ -350,8 +446,8 @@ body {
 
 .countdown.go {
     color: #ff0000;
-    text-shadow: 0 0 30px rgba(255, 0, 0, 0.9);
-    animation: goPulse 0.25s ease-in-out infinite;
+    text-shadow: 0 0 35px rgba(255, 0, 0, 1);
+    animation: goPulse 0.2s ease-in-out infinite;
 }
 
 @keyframes goPulse {
@@ -362,12 +458,12 @@ body {
     }
 
     50% {
-        transform: scale(1.15);
+        transform: scale(1.2);
     }
 }
 
 .round-info {
-    font-size: 0.65rem;
+    font-size: 0.7rem;
     color: #ffd700;
     letter-spacing: 1px;
 }
@@ -383,7 +479,7 @@ body {
 }
 
 .game-message {
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     color: #e8d5b7;
     text-align: center;
 }
@@ -395,8 +491,8 @@ body {
 
 /* 시작 버튼 */
 .start-button {
-    padding: 12px 15px;
-    font-size: 1rem;
+    padding: 12px 18px;
+    font-size: 1.1rem;
     font-weight: 700;
     font-family: inherit;
     background: linear-gradient(180deg, #ffd700 0%, #ff8c00 100%);
@@ -423,8 +519,8 @@ body {
 /* GO 타이머 */
 .go-timer-container {
     display: none;
-    width: 35px;
-    height: 35px;
+    width: 38px;
+    height: 38px;
 }
 
 .go-timer-container.active {
@@ -451,6 +547,108 @@ body {
     stroke-dasharray: 283;
     stroke-dashoffset: 0;
     transition: stroke-dashoffset 0.05s linear;
+}
+
+/* ============================================
+   편집 모달
+   ============================================ */
+.edit-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.edit-modal.show {
+    display: flex;
+}
+
+.edit-modal-content {
+    background: #2a1a0a;
+    border: 2px solid #ffd700;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    width: 85%;
+    max-width: 300px;
+}
+
+.edit-modal-content h3 {
+    color: #ffd700;
+    margin-bottom: 15px;
+}
+
+.edit-modal-content label {
+    display: block;
+    font-size: 0.9rem;
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+
+.edit-modal-content input {
+    width: 100%;
+    padding: 8px;
+    font-size: 1rem;
+    font-family: inherit;
+    background: #1a0a00;
+    border: 1px solid #8b4513;
+    border-radius: 5px;
+    color: #e8d5b7;
+    text-align: center;
+}
+
+.emoji-picker {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.emoji-option {
+    font-size: 1.8rem;
+    padding: 5px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background 0.2s;
+}
+
+.emoji-option:hover,
+.emoji-option.selected {
+    background: rgba(255, 215, 0, 0.3);
+}
+
+.edit-modal-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 15px;
+}
+
+.edit-modal-buttons button {
+    padding: 10px 25px;
+    font-size: 1rem;
+    font-weight: 700;
+    font-family: inherit;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+#edit-save {
+    background: #ffd700;
+    color: #333;
+}
+
+#edit-cancel {
+    background: #666;
+    color: #fff;
 }
 
 /* ============================================
@@ -626,10 +824,59 @@ body {
     }
 }
 
+/* 스턴 상태 - 화려한 효과 */
 .player-section.stunned {
-    background: linear-gradient(0deg, rgba(255, 100, 50, 0.2) 0%, transparent 100%);
+    animation: stunnedFlash 0.5s ease-in-out infinite;
+}
+
+@keyframes stunnedFlash {
+
+    0%,
+    100% {
+        background: linear-gradient(0deg, rgba(255, 100, 50, 0.2) 0%, transparent 100%);
+        filter: none;
+    }
+
+    50% {
+        background: linear-gradient(0deg, rgba(255, 50, 0, 0.4) 0%, transparent 100%);
+        filter: brightness(0.9) saturate(1.2);
+    }
 }
 
 .opponent-section.stunned {
-    background: linear-gradient(180deg, rgba(255, 100, 50, 0.2) 0%, transparent 100%);
+    animation: stunnedFlashOpponent 0.5s ease-in-out infinite;
+}
+
+@keyframes stunnedFlashOpponent {
+
+    0%,
+    100% {
+        background: linear-gradient(180deg, rgba(255, 100, 50, 0.2) 0%, transparent 100%);
+        filter: none;
+    }
+
+    50% {
+        background: linear-gradient(180deg, rgba(255, 50, 0, 0.4) 0%, transparent 100%);
+        filter: brightness(0.9) saturate(1.2);
+    }
+}
+
+.player-section.stunned .cowboy {
+    animation: stunShake 0.15s infinite;
+}
+
+@keyframes stunShake {
+
+    0%,
+    100% {
+        transform: translateX(0) rotate(0deg);
+    }
+
+    25% {
+        transform: translateX(-5px) rotate(-5deg);
+    }
+
+    75% {
+        transform: translateX(5px) rotate(5deg);
+    }
 }
