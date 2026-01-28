@@ -10,18 +10,19 @@
 
 <body>
     <div class="game-container">
-        <!-- ========== 상단: 상대편 영역 (180도 회전) ========== -->
+        <!-- ========== 상단: 상대편 영역 (전체 180도 회전) ========== -->
         <div class="player-section opponent-section">
-            <button class="fire-button" id="fire-btn2">🔫 발사!</button>
+            <!-- 나와 동일한 순서: 이름 → 이모티콘 → 체력 → 발사 -->
             <div class="player-info">
-                <div class="stun-indicator" id="stun2">😵 STUNNED</div>
+                <span class="player-label">PLAYER 2</span>
+                <div class="cowboy" id="player2-emoji">🤠</div>
                 <div class="hp-bar">
                     <div class="hp-fill" id="hp2"></div>
                     <span class="hp-text" id="hp2-text">100</span>
                 </div>
-                <div class="cowboy" id="player2-emoji">🤠</div>
-                <span class="player-label">PLAYER 2</span>
+                <div class="stun-indicator" id="stun2">😵 STUNNED</div>
             </div>
+            <button class="fire-button" id="fire-btn2">🔫 발사!</button>
             <div class="shot-indicator" id="shot2"></div>
             <div class="damage-popup" id="damage2"></div>
         </div>
@@ -36,6 +37,7 @@
 
         <!-- ========== 하단: 내 영역 ========== -->
         <div class="player-section my-section">
+            <!-- 이름 → 이모티콘 → 체력 → 발사 순서 -->
             <div class="player-info">
                 <span class="player-label">PLAYER 1</span>
                 <div class="cowboy" id="player1-emoji">🤠</div>
