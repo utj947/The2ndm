@@ -350,7 +350,12 @@ function startCountdown() {
 
     updateMessage('준비...');
     updateStartButton();
-    updateEditRulesButtons();
+
+    // 카운트다운 시작 즉시 버튼 숨김 (Phase 변경 전이라도)
+    [1, 2].forEach(pNum => {
+        DOM.players[pNum].rulesBtn.classList.add('hidden');
+        DOM.players[pNum].editBtn.classList.add('hidden');
+    });
 
     const startDelay = getRandomStartDelay();
 

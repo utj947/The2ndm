@@ -160,7 +160,7 @@ body {
 }
 
 .player-label {
-    font-size: 0.9rem;
+    font-size: 1rem;
     font-weight: 700;
     color: #ffd700;
     letter-spacing: 1px;
@@ -184,7 +184,7 @@ body {
 }
 
 .cowboy {
-    font-size: 3.2rem;
+    font-size: 4rem;
     filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
     transition: transform 0.1s;
 }
@@ -192,8 +192,8 @@ body {
 /* HP 바 - 크게 */
 .hp-bar {
     width: 100%;
-    max-width: 120px;
-    height: 18px;
+    max-width: 140px;
+    height: 24px;
     background: rgba(0, 0, 0, 0.5);
     border: 2px solid #8b4513;
     border-radius: 9px;
@@ -231,7 +231,7 @@ body {
     left: 50%;
     transform: translate(-50%, -50%);
     font-weight: 700;
-    font-size: 0.75rem;
+    font-size: 0.85rem;
     text-shadow: 1px 1px 2px black;
 }
 
