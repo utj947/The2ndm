@@ -10,72 +10,44 @@
 
 <body>
     <div class="game-container">
-        <!-- 상대편 (위쪽, 180도 회전) -->
-        <div class="player-area opponent" id="opponent-area">
-            <div class="player player2" id="player2">
-                <div class="player-header">
-                    <span class="player-label" id="player2-label">PLAYER 2</span>
-                </div>
-                <div class="cowboy-container">
-                    <div class="cowboy" id="player2-emoji">🤠</div>
-                </div>
+        <!-- ========== 상단: 상대편 영역 (180도 회전) ========== -->
+        <div class="player-section opponent-section">
+            <button class="fire-button" id="fire-btn2">🔫 발사!</button>
+            <div class="player-info">
+                <div class="stun-indicator" id="stun2">😵 STUNNED</div>
                 <div class="hp-bar">
                     <div class="hp-fill" id="hp2"></div>
                     <span class="hp-text" id="hp2-text">100</span>
                 </div>
-                <div class="stun-indicator" id="stun2">😵 STUNNED</div>
-                <div class="stun-gauge">
-                    <div class="stun-bar" id="stun-bar2"></div>
-                </div>
-                <!-- 터치 발사 버튼 -->
-                <button class="fire-button" id="fire-btn2" data-player="2">
-                    🔫 발사!
-                </button>
-                <div class="shot-indicator" id="shot2"></div>
-                <div class="damage-popup" id="damage2"></div>
+                <div class="cowboy" id="player2-emoji">🤠</div>
+                <span class="player-label">PLAYER 2</span>
             </div>
+            <div class="shot-indicator" id="shot2"></div>
+            <div class="damage-popup" id="damage2"></div>
         </div>
 
-        <!-- 중앙 게임 정보 -->
-        <div class="center-area">
+        <!-- ========== 중앙: 게임 정보 영역 ========== -->
+        <div class="center-section">
             <div class="round-info" id="round-info">ROUND 1</div>
             <div class="countdown" id="countdown">READY</div>
-            <div class="game-message" id="game-message">화면을 터치하여 시작!</div>
-            <!-- GO 타이머 -->
-            <div class="go-timer-container" id="go-timer-container">
-                <svg class="go-timer-svg" viewBox="0 0 100 100">
-                    <circle class="go-timer-bg" cx="50" cy="50" r="45" />
-                    <circle class="go-timer-progress" id="go-timer-progress" cx="50" cy="50" r="45" />
-                </svg>
-            </div>
-            <!-- 게임 시작 버튼 -->
+            <div class="game-message" id="game-message">시작 버튼을 눌러주세요</div>
             <button class="start-button" id="start-btn">🤠 결투 시작!</button>
         </div>
 
-        <!-- 내 영역 (아래쪽) -->
-        <div class="player-area me" id="me-area">
-            <div class="player player1" id="player1">
-                <div class="shot-indicator" id="shot1"></div>
-                <div class="damage-popup" id="damage1"></div>
-                <!-- 터치 발사 버튼 -->
-                <button class="fire-button" id="fire-btn1" data-player="1">
-                    🔫 발사!
-                </button>
-                <div class="stun-indicator" id="stun1">😵 STUNNED</div>
-                <div class="stun-gauge">
-                    <div class="stun-bar" id="stun-bar1"></div>
-                </div>
+        <!-- ========== 하단: 내 영역 ========== -->
+        <div class="player-section my-section">
+            <div class="player-info">
+                <span class="player-label">PLAYER 1</span>
+                <div class="cowboy" id="player1-emoji">🤠</div>
                 <div class="hp-bar">
                     <div class="hp-fill" id="hp1"></div>
                     <span class="hp-text" id="hp1-text">100</span>
                 </div>
-                <div class="cowboy-container">
-                    <div class="cowboy" id="player1-emoji">🤠</div>
-                </div>
-                <div class="player-header">
-                    <span class="player-label" id="player1-label">PLAYER 1</span>
-                </div>
+                <div class="stun-indicator" id="stun1">😵 STUNNED</div>
             </div>
+            <button class="fire-button" id="fire-btn1">🔫 발사!</button>
+            <div class="shot-indicator" id="shot1"></div>
+            <div class="damage-popup" id="damage1"></div>
         </div>
 
         <!-- 게임 오버 오버레이 -->

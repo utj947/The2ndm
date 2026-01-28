@@ -1,15 +1,7 @@
 /* ============================================
    The2nd - 모바일 버전 스타일
-   세로 레이아웃, 터치 최적화
+   3영역: 상대(위), 게임정보(중앙), 나(아래)
    ============================================ */
-
-:root {
-    --color-sand: #e8d5b7;
-    --color-brown: #8b4513;
-    --color-gold: #ffd700;
-    --color-blood: #8b0000;
-    --color-sunset: linear-gradient(180deg, #ff6b35 0%, #f7931e 50%, #ffd700 100%);
-}
 
 * {
     margin: 0;
@@ -24,14 +16,14 @@ body {
     height: 100%;
     overflow: hidden;
     touch-action: manipulation;
-}
-
-body {
     font-family: 'Courier New', monospace;
     background: linear-gradient(180deg, #1a0a00 0%, #3d1a00 50%, #0d0501 100%);
-    color: var(--color-sand);
+    color: #e8d5b7;
 }
 
+/* ============================================
+   메인 컨테이너 - 3영역 분할
+   ============================================ */
 .game-container {
     width: 100%;
     height: 100%;
@@ -41,113 +33,57 @@ body {
 }
 
 /* ============================================
-   플레이어 영역
+   플레이어 영역 (상단/하단)
    ============================================ */
-.player-area {
+.player-section {
     flex: 1;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
-    padding: 10px;
+    justify-content: center;
+    padding: 15px;
     position: relative;
+    gap: 10px;
 }
 
 /* 상대 영역 - 180도 회전 */
-.player-area.opponent {
-    background: linear-gradient(0deg, rgba(139, 0, 0, 0.2) 0%, transparent 100%);
+.opponent-section {
+    background: linear-gradient(180deg, rgba(139, 69, 19, 0.3) 0%, transparent 100%);
     transform: rotate(180deg);
 }
 
 /* 내 영역 */
-.player-area.me {
-    background: linear-gradient(180deg, rgba(139, 0, 0, 0.2) 0%, transparent 100%);
+.my-section {
+    background: linear-gradient(0deg, rgba(139, 69, 19, 0.3) 0%, transparent 100%);
 }
 
-.player {
+/* 플레이어 정보 */
+.player-info {
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 100%;
-    max-width: 300px;
-}
-
-.player-header {
-    display: flex;
-    align-items: center;
     gap: 8px;
-    margin-bottom: 5px;
 }
 
 .player-label {
     font-size: 0.9rem;
     font-weight: 700;
-    color: var(--color-gold);
+    color: #ffd700;
     letter-spacing: 2px;
 }
 
-/* 카우보이 이모지 */
-.cowboy-container {
-    position: relative;
-    margin: 5px 0;
-}
-
 .cowboy {
-    font-size: 4rem;
+    font-size: 3.5rem;
     filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
-}
-
-.player2 .cowboy {
-    transform: scaleX(-1);
-}
-
-.player.stunned .cowboy {
-    animation: shake 0.1s infinite;
-}
-
-@keyframes shake {
-
-    0%,
-    100% {
-        transform: translateX(0);
-    }
-
-    25% {
-        transform: translateX(-3px);
-    }
-
-    75% {
-        transform: translateX(3px);
-    }
-}
-
-.player2.stunned .cowboy {
-    animation: shake2 0.1s infinite;
-}
-
-@keyframes shake2 {
-
-    0%,
-    100% {
-        transform: translateX(0) scaleX(-1);
-    }
-
-    25% {
-        transform: translateX(-3px) scaleX(-1);
-    }
-
-    75% {
-        transform: translateX(3px) scaleX(-1);
-    }
 }
 
 /* HP 바 */
 .hp-bar {
-    width: 100%;
-    max-width: 200px;
-    height: 20px;
+    width: 150px;
+    height: 18px;
     background: rgba(0, 0, 0, 0.5);
-    border: 2px solid var(--color-brown);
-    border-radius: 10px;
+    border: 2px solid #8b4513;
+    border-radius: 9px;
     overflow: hidden;
     position: relative;
 }
@@ -182,67 +118,52 @@ body {
     left: 50%;
     transform: translate(-50%, -50%);
     font-weight: 700;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     text-shadow: 1px 1px 2px black;
 }
 
 /* 스턴 표시 */
 .stun-indicator {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     color: #ff6b35;
     font-weight: 700;
     opacity: 0;
     transition: opacity 0.2s;
-    margin: 5px 0;
 }
 
-.stun-gauge {
-    width: 100%;
-    max-width: 150px;
-    height: 8px;
-    background: rgba(0, 0, 0, 0.5);
-    border-radius: 4px;
-    overflow: hidden;
-    margin-bottom: 10px;
-}
-
-.stun-bar {
-    height: 100%;
-    width: 0%;
-    background: linear-gradient(90deg, #ff6b35, #ff0000);
-    transition: width 0.05s linear;
+.stun-indicator.show {
+    opacity: 1;
 }
 
 /* ============================================
-   발사 버튼 (터치용)
+   발사 버튼
    ============================================ */
 .fire-button {
-    width: 100%;
-    max-width: 200px;
-    padding: 20px 30px;
-    font-size: 1.5rem;
+    width: 90%;
+    max-width: 250px;
+    padding: 18px;
+    font-size: 1.4rem;
     font-weight: 700;
     font-family: inherit;
     border: none;
-    border-radius: 15px;
+    border-radius: 12px;
     cursor: pointer;
-    transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transition: all 0.15s;
 
-    /* 기본 비활성 상태 */
+    /* 기본: 비활성 */
     background: #444;
     color: #888;
-    box-shadow: 0 6px 0 #222;
+    box-shadow: 0 5px 0 #222;
 }
 
 .fire-button.active {
     background: linear-gradient(180deg, #ff4444 0%, #cc0000 100%);
     color: white;
-    box-shadow: 0 0 20px rgba(255, 68, 68, 0.6), 0 6px 0 #5c0a0a;
-    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(255, 68, 68, 0.6), 0 5px 0 #5c0a0a;
 }
 
 .fire-button.active:active {
-    transform: scale(0.95) translateY(4px);
+    transform: translateY(3px);
     box-shadow: 0 2px 0 #5c0a0a;
 }
 
@@ -250,13 +171,96 @@ body {
     background: #333;
     color: #555;
     box-shadow: 0 3px 0 #222;
-    transform: scale(0.95);
 }
 
-/* 샷 이펙트 */
+/* ============================================
+   중앙 게임 정보 영역
+   ============================================ */
+.center-section {
+    background: rgba(0, 0, 0, 0.85);
+    border-top: 2px solid #ffd700;
+    border-bottom: 2px solid #ffd700;
+    padding: 15px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    z-index: 10;
+}
+
+.round-info {
+    font-size: 0.9rem;
+    color: #ffd700;
+    letter-spacing: 3px;
+}
+
+.countdown {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #e8d5b7;
+    text-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+}
+
+.countdown.go {
+    color: #ff0000;
+    text-shadow: 0 0 25px rgba(255, 0, 0, 0.8);
+    animation: goPulse 0.3s ease-in-out infinite;
+}
+
+@keyframes goPulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+.game-message {
+    font-size: 0.85rem;
+    color: #e8d5b7;
+}
+
+.game-message.damage {
+    color: #ff6b35;
+    font-weight: 700;
+}
+
+/* 시작 버튼 */
+.start-button {
+    padding: 12px 25px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    font-family: inherit;
+    background: linear-gradient(180deg, #ffd700 0%, #ff8c00 100%);
+    border: none;
+    border-radius: 8px;
+    color: #333;
+    cursor: pointer;
+    box-shadow: 0 3px 0 #8b4513;
+    transition: all 0.15s;
+}
+
+.start-button:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 #8b4513;
+}
+
+.start-button:disabled {
+    background: #666;
+    color: #999;
+    box-shadow: 0 2px 0 #333;
+}
+
+/* ============================================
+   이펙트
+   ============================================ */
 .shot-indicator {
     position: absolute;
-    font-size: 3rem;
+    font-size: 2.5rem;
     opacity: 0;
     pointer-events: none;
 }
@@ -293,10 +297,9 @@ body {
     }
 }
 
-/* 데미지 팝업 */
 .damage-popup {
     position: absolute;
-    font-size: 2rem;
+    font-size: 1.8rem;
     font-weight: 700;
     color: #ff0000;
     opacity: 0;
@@ -316,130 +319,8 @@ body {
 
     100% {
         opacity: 0;
-        transform: translateY(-30px);
+        transform: translateY(-25px);
     }
-}
-
-/* ============================================
-   중앙 영역
-   ============================================ */
-.center-area {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    z-index: 100;
-    background: rgba(0, 0, 0, 0.8);
-    padding: 20px 30px;
-    border-radius: 15px;
-    border: 2px solid var(--color-gold);
-    min-width: 200px;
-}
-
-.round-info {
-    font-size: 1rem;
-    color: var(--color-gold);
-    letter-spacing: 3px;
-}
-
-.countdown {
-    font-size: 3rem;
-    font-weight: 700;
-    color: var(--color-sand);
-    text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
-    transition: all 0.2s;
-}
-
-.countdown.go {
-    color: #ff0000;
-    text-shadow: 0 0 30px rgba(255, 0, 0, 0.8);
-    animation: goPulse 0.3s ease-in-out infinite;
-}
-
-@keyframes goPulse {
-
-    0%,
-    100% {
-        transform: scale(1);
-    }
-
-    50% {
-        transform: scale(1.1);
-    }
-}
-
-.game-message {
-    font-size: 0.9rem;
-    color: var(--color-sand);
-    text-align: center;
-}
-
-.game-message.damage {
-    color: #ff6b35;
-    font-weight: 700;
-}
-
-/* 시작 버튼 */
-.start-button {
-    padding: 15px 30px;
-    font-size: 1.2rem;
-    font-weight: 700;
-    font-family: inherit;
-    background: linear-gradient(180deg, #ffd700 0%, #ff8c00 100%);
-    border: none;
-    border-radius: 10px;
-    color: #333;
-    cursor: pointer;
-    box-shadow: 0 4px 0 #8b4513;
-    transition: all 0.15s;
-}
-
-.start-button:active {
-    transform: translateY(2px);
-    box-shadow: 0 2px 0 #8b4513;
-}
-
-.start-button:disabled {
-    background: #666;
-    color: #999;
-    box-shadow: 0 2px 0 #333;
-}
-
-/* GO 타이머 */
-.go-timer-container {
-    display: none;
-    width: 60px;
-    height: 60px;
-}
-
-.go-timer-container.active {
-    display: block;
-}
-
-.go-timer-svg {
-    width: 100%;
-    height: 100%;
-    transform: rotate(-90deg);
-}
-
-.go-timer-bg {
-    fill: none;
-    stroke: rgba(255, 255, 255, 0.2);
-    stroke-width: 8;
-}
-
-.go-timer-progress {
-    fill: none;
-    stroke: #ff0000;
-    stroke-width: 8;
-    stroke-linecap: round;
-    stroke-dasharray: 283;
-    stroke-dashoffset: 0;
-    transition: stroke-dashoffset 0.05s linear;
 }
 
 /* ============================================
@@ -480,34 +361,34 @@ body {
 }
 
 .game-over-content h1 {
-    font-size: 3rem;
-    color: var(--color-gold);
-    text-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
+    font-size: 2.5rem;
+    color: #ffd700;
+    text-shadow: 0 0 25px rgba(255, 215, 0, 0.8);
     margin-bottom: 10px;
 }
 
 .game-over-content p {
-    font-size: 1.5rem;
-    color: var(--color-sand);
-    margin-bottom: 30px;
+    font-size: 1.3rem;
+    color: #e8d5b7;
+    margin-bottom: 25px;
 }
 
 #restart-btn {
-    padding: 15px 40px;
-    font-size: 1.3rem;
+    padding: 12px 35px;
+    font-size: 1.2rem;
     font-weight: 700;
     font-family: inherit;
     background: linear-gradient(180deg, #ffd700 0%, #ff8c00 100%);
     border: none;
-    border-radius: 10px;
+    border-radius: 8px;
     color: #333;
     cursor: pointer;
-    box-shadow: 0 4px 0 #8b4513;
+    box-shadow: 0 3px 0 #8b4513;
 }
 
 #restart-btn:active {
     transform: translateY(2px);
-    box-shadow: 0 2px 0 #8b4513;
+    box-shadow: 0 1px 0 #8b4513;
 }
 
 /* ============================================
@@ -551,23 +432,6 @@ body {
     }
 }
 
-/* 피격 효과 */
-.player.hit {
-    animation: hitFlash 0.3s ease-out;
-}
-
-@keyframes hitFlash {
-
-    0%,
-    100% {
-        filter: none;
-    }
-
-    50% {
-        filter: brightness(2) saturate(0);
-    }
-}
-
 /* 화면 흔들림 */
 .game-container.shake {
     animation: containerShake 0.4s ease-out;
@@ -581,18 +445,35 @@ body {
     }
 
     20% {
-        transform: translateX(-10px);
+        transform: translateX(-8px);
     }
 
     40% {
-        transform: translateX(10px);
+        transform: translateX(8px);
     }
 
     60% {
-        transform: translateX(-5px);
+        transform: translateX(-4px);
     }
 
     80% {
-        transform: translateX(5px);
+        transform: translateX(4px);
+    }
+}
+
+/* 플레이어 피격 */
+.player-section.hit {
+    animation: hitFlash 0.3s ease-out;
+}
+
+@keyframes hitFlash {
+
+    0%,
+    100% {
+        filter: none;
+    }
+
+    50% {
+        filter: brightness(2) saturate(0);
     }
 }

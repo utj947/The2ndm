@@ -1,6 +1,6 @@
 /**
  * The2nd - 모바일 버전 게임 로직
- * 터치/클릭 기반 발사, 세로 레이아웃
+ * 터치/클릭 기반 발사, 세로 3영역 레이아웃
  */
 
 // ============================================
@@ -42,14 +42,11 @@ class GameState {
         this.phase = GamePhase.READY;
         this.round = 1;
         this.players = {
-            1: { hp: CONFIG.INITIAL_HP, stunned: false, shotFired: false, stunTimer: null, stunStartTime: null },
-            2: { hp: CONFIG.INITIAL_HP, stunned: false, shotFired: false, stunTimer: null, stunStartTime: null }
+            1: { hp: CONFIG.INITIAL_HP, stunned: false, shotFired: false, stunTimer: null },
+            2: { hp: CONFIG.INITIAL_HP, stunned: false, shotFired: false, stunTimer: null }
         };
         this.countdownTimers = [];
         this.goTimer = null;
-        this.goStartTime = null;
-        this.goAnimationFrame = null;
-        this.stunAnimationFrames = {};
     }
 
     resetRound() {
@@ -63,6 +60,7 @@ class GameState {
 // DOM 요소
 // ============================================
 const DOM = {
+    container: document.querySelector('.game-container'),
     countdown: document.getElementById('countdown'),
     roundInfo: document.getElementById('round-info'),
     message: document.getElementById('game-message'),
@@ -72,25 +70,23 @@ const DOM = {
     restartBtn: document.getElementById('restart-btn'),
     startBtn: document.getElementById('start-btn'),
     flash: document.getElementById('flash'),
-    goTimerContainer: document.getElementById('go-timer-container'),
-    goTimerProgress: document.getElementById('go-timer-progress'),
     players: {
         1: {
-            container: document.getElementById('player1'),
+            section: document.querySelector('.my-section'),
             hp: document.getElementById('hp1'),
             hpText: document.getElementById('hp1-text'),
             stun: document.getElementById('stun1'),
-            stunBar: document.getElementById('stun-bar1'),
             shot: document.getElementById('shot1'),
+            damage: document.getElementById('damage1'),
             fireBtn: document.getElementById('fire-btn1')
         },
         2: {
-            container: document.getElementById('player2'),
+            section: document.querySelector('.opponent-section'),
             hp: document.getElementById('hp2'),
             hpText: document.getElementById('hp2-text'),
             stun: document.getElementById('stun2'),
-            stunBar: document.getElementById('stun-bar2'),
             shot: document.getElementById('shot2'),
+            damage: document.getElementById('damage2'),
             fireBtn: document.getElementById('fire-btn2')
         }
     }
@@ -195,14 +191,11 @@ function applyStun(playerNum) {
     }
 
     player.stunned = true;
-    player.stunStartTime = Date.now();
     showStun(playerNum, true);
-    animateStunBar(playerNum);
     updateFireButtons();
 
     player.stunTimer = setTimeout(() => {
         player.stunned = false;
-        player.stunStartTime = null;
         showStun(playerNum, false);
         player.stunTimer = null;
         updateFireButtons();
@@ -230,7 +223,6 @@ function handleShot(shooterNum) {
         applyDamage(targetNum, damage);
         applyStun(targetNum);
         updateMessage(`P${shooterNum}: 클린샷! 🤠 ${damage}!`, true);
-        stopGoTimer();
     } else {
         const damage = randomInt(CONFIG.DIRTY_SHOT_DAMAGE_MIN, CONFIG.DIRTY_SHOT_DAMAGE_MAX);
         showShotEffect(shooterNum, 'dirty', damage);
@@ -253,7 +245,6 @@ function checkGameOver() {
     if (p1Dead || p2Dead) {
         game.phase = GamePhase.GAME_OVER;
         clearAllTimers();
-        stopGoTimer();
         updateFireButtons();
         updateStartButton();
 
@@ -320,7 +311,6 @@ function startCountdown() {
             game.phase = GamePhase.GO;
             updateCountdown('GO!', true);
             updateMessage('발사!!!', true);
-            startGoTimer();
 
             game.goTimer = setTimeout(() => {
                 if (game.phase === GamePhase.GO) {
@@ -336,7 +326,6 @@ function endRound() {
 
     game.phase = GamePhase.ROUND_END;
     clearAllTimers();
-    stopGoTimer();
     updateFireButtons();
 
     updateCountdown('END');
@@ -361,7 +350,6 @@ function endRound() {
 function initGame() {
     game.reset();
     hideGameOver();
-    stopGoTimer();
     updateHP(1);
     updateHP(2);
     updateCountdown('READY');
@@ -369,8 +357,6 @@ function initGame() {
     updateMessage('시작 버튼을 눌러주세요!');
     showStun(1, false);
     showStun(2, false);
-    DOM.players[1].stunBar.style.width = '0%';
-    DOM.players[2].stunBar.style.width = '0%';
     updateFireButtons();
     updateStartButton();
 }
@@ -380,69 +366,7 @@ function initGame() {
 // ============================================
 function showStun(playerNum, show) {
     const dom = DOM.players[playerNum];
-    dom.container.classList.toggle('stunned', show);
-    dom.stun.style.opacity = show ? '1' : '0';
-}
-
-function animateStunBar(playerNum) {
-    const player = game.players[playerNum];
-    const dom = DOM.players[playerNum];
-
-    if (game.stunAnimationFrames[playerNum]) {
-        cancelAnimationFrame(game.stunAnimationFrames[playerNum]);
-    }
-
-    function updateBar() {
-        if (!player.stunned || !player.stunStartTime) {
-            dom.stunBar.style.width = '0%';
-            return;
-        }
-
-        const elapsed = Date.now() - player.stunStartTime;
-        const remaining = Math.max(0, CONFIG.STUN_DURATION - elapsed);
-        const percent = (remaining / CONFIG.STUN_DURATION) * 100;
-
-        dom.stunBar.style.width = `${percent}%`;
-
-        if (remaining > 0) {
-            game.stunAnimationFrames[playerNum] = requestAnimationFrame(updateBar);
-        } else {
-            setTimeout(updateFireButtons, 0);
-        }
-    }
-
-    updateBar();
-}
-
-function startGoTimer() {
-    DOM.goTimerContainer.classList.add('active');
-    game.goStartTime = Date.now();
-
-    const circumference = 2 * Math.PI * 45;
-
-    function updateTimer() {
-        const elapsed = Date.now() - game.goStartTime;
-        const remaining = Math.max(0, CONFIG.GO_DURATION - elapsed);
-        const progress = remaining / CONFIG.GO_DURATION;
-
-        const offset = circumference * (1 - progress);
-        DOM.goTimerProgress.style.strokeDashoffset = offset;
-
-        if (remaining > 0 && game.phase === GamePhase.GO) {
-            game.goAnimationFrame = requestAnimationFrame(updateTimer);
-        }
-    }
-
-    updateTimer();
-}
-
-function stopGoTimer() {
-    DOM.goTimerContainer.classList.remove('active');
-    if (game.goAnimationFrame) {
-        cancelAnimationFrame(game.goAnimationFrame);
-        game.goAnimationFrame = null;
-    }
-    DOM.goTimerProgress.style.strokeDashoffset = 0;
+    dom.stun.classList.toggle('show', show);
 }
 
 function showShotEffect(playerNum, type, damage = 0) {
@@ -450,31 +374,34 @@ function showShotEffect(playerNum, type, damage = 0) {
     const shooterDom = DOM.players[playerNum];
     const targetDom = DOM.players[targetNum];
 
+    // 발사 이펙트
     shooterDom.shot.textContent = type === 'clean' ? '💥' : '💨';
     shooterDom.shot.className = 'shot-indicator';
     void shooterDom.shot.offsetWidth;
     shooterDom.shot.classList.add(type);
 
-    const container = document.querySelector('.game-container');
-    container.classList.remove('shake');
-    void container.offsetWidth;
-    container.classList.add('shake');
-    setTimeout(() => container.classList.remove('shake'), 400);
+    // 화면 흔들림
+    DOM.container.classList.remove('shake');
+    void DOM.container.offsetWidth;
+    DOM.container.classList.add('shake');
+    setTimeout(() => DOM.container.classList.remove('shake'), 400);
 
-    targetDom.container.classList.remove('hit');
-    void targetDom.container.offsetWidth;
-    targetDom.container.classList.add('hit');
-    setTimeout(() => targetDom.container.classList.remove('hit'), 300);
+    // 피격 효과
+    targetDom.section.classList.remove('hit');
+    void targetDom.section.offsetWidth;
+    targetDom.section.classList.add('hit');
+    setTimeout(() => targetDom.section.classList.remove('hit'), 300);
 
+    // 데미지 표시
     if (damage > 0) {
-        const damageEl = document.getElementById(`damage${targetNum}`);
-        damageEl.textContent = `-${damage}`;
-        damageEl.classList.remove('show');
-        void damageEl.offsetWidth;
-        damageEl.classList.add('show');
+        targetDom.damage.textContent = `-${damage}`;
+        targetDom.damage.classList.remove('show');
+        void targetDom.damage.offsetWidth;
+        targetDom.damage.classList.add('show');
     }
 
-    DOM.flash.classList.remove('flash', 'flash-clean', 'flash-dirty');
+    // 플래시 효과
+    DOM.flash.classList.remove('flash-clean', 'flash-dirty');
     void DOM.flash.offsetWidth;
     if (type === 'clean') {
         DOM.flash.classList.add('flash-clean');
@@ -506,6 +433,14 @@ DOM.startBtn.addEventListener('click', () => {
     }
 });
 
+// 시작 버튼 터치
+DOM.startBtn.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    if (game.phase === GamePhase.READY) {
+        startCountdown();
+    }
+});
+
 // 발사 버튼 (터치/클릭)
 DOM.players[1].fireBtn.addEventListener('click', () => handleShot(1));
 DOM.players[2].fireBtn.addEventListener('click', () => handleShot(2));
@@ -524,20 +459,9 @@ DOM.players[2].fireBtn.addEventListener('touchstart', (e) => {
 DOM.restartBtn.addEventListener('click', () => {
     initGame();
 });
-
-// 키보드 지원 (PC에서도 가능)
-document.addEventListener('keydown', (e) => {
-    if (e.code === 'Space') {
-        if (game.phase === GamePhase.GAME_OVER) {
-            initGame();
-        } else if (game.phase === GamePhase.READY) {
-            startCountdown();
-        }
-    } else if (e.code === 'KeyA') {
-        handleShot(1);
-    } else if (e.code === 'KeyL') {
-        handleShot(2);
-    }
+DOM.restartBtn.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    initGame();
 });
 
 // 게임 초기화 실행
