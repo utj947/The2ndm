@@ -1,6 +1,7 @@
 /**
  * The2nd - 모바일 버전 게임 로직
  * 터치/클릭 기반 발사, 세로 3영역 레이아웃
+ * 스턴 게이지, GO 타이머, 타격감 강화
  */
 
 // ============================================
@@ -42,11 +43,14 @@ class GameState {
         this.phase = GamePhase.READY;
         this.round = 1;
         this.players = {
-            1: { hp: CONFIG.INITIAL_HP, stunned: false, shotFired: false, stunTimer: null },
-            2: { hp: CONFIG.INITIAL_HP, stunned: false, shotFired: false, stunTimer: null }
+            1: { hp: CONFIG.INITIAL_HP, stunned: false, shotFired: false, stunTimer: null, stunStartTime: null },
+            2: { hp: CONFIG.INITIAL_HP, stunned: false, shotFired: false, stunTimer: null, stunStartTime: null }
         };
         this.countdownTimers = [];
         this.goTimer = null;
+        this.goStartTime = null;
+        this.goAnimationFrame = null;
+        this.stunAnimationFrames = {};
     }
 
     resetRound() {
@@ -70,12 +74,15 @@ const DOM = {
     restartBtn: document.getElementById('restart-btn'),
     startBtn: document.getElementById('start-btn'),
     flash: document.getElementById('flash'),
+    goTimerContainer: document.getElementById('go-timer-container'),
+    goTimerProgress: document.getElementById('go-timer-progress'),
     players: {
         1: {
             section: document.querySelector('.my-section'),
             hp: document.getElementById('hp1'),
             hpText: document.getElementById('hp1-text'),
             stun: document.getElementById('stun1'),
+            stunBar: document.getElementById('stun-bar1'),
             shot: document.getElementById('shot1'),
             damage: document.getElementById('damage1'),
             fireBtn: document.getElementById('fire-btn1')
@@ -85,6 +92,7 @@ const DOM = {
             hp: document.getElementById('hp2'),
             hpText: document.getElementById('hp2-text'),
             stun: document.getElementById('stun2'),
+            stunBar: document.getElementById('stun-bar2'),
             shot: document.getElementById('shot2'),
             damage: document.getElementById('damage2'),
             fireBtn: document.getElementById('fire-btn2')
@@ -191,11 +199,14 @@ function applyStun(playerNum) {
     }
 
     player.stunned = true;
+    player.stunStartTime = Date.now();
     showStun(playerNum, true);
+    animateStunBar(playerNum);
     updateFireButtons();
 
     player.stunTimer = setTimeout(() => {
         player.stunned = false;
+        player.stunStartTime = null;
         showStun(playerNum, false);
         player.stunTimer = null;
         updateFireButtons();
@@ -223,6 +234,7 @@ function handleShot(shooterNum) {
         applyDamage(targetNum, damage);
         applyStun(targetNum);
         updateMessage(`P${shooterNum}: 클린샷! 🤠 ${damage}!`, true);
+        stopGoTimer();
     } else {
         const damage = randomInt(CONFIG.DIRTY_SHOT_DAMAGE_MIN, CONFIG.DIRTY_SHOT_DAMAGE_MAX);
         showShotEffect(shooterNum, 'dirty', damage);
@@ -245,6 +257,7 @@ function checkGameOver() {
     if (p1Dead || p2Dead) {
         game.phase = GamePhase.GAME_OVER;
         clearAllTimers();
+        stopGoTimer();
         updateFireButtons();
         updateStartButton();
 
@@ -311,6 +324,8 @@ function startCountdown() {
             game.phase = GamePhase.GO;
             updateCountdown('GO!', true);
             updateMessage('발사!!!', true);
+            updateFireButtons();
+            startGoTimer();
 
             game.goTimer = setTimeout(() => {
                 if (game.phase === GamePhase.GO) {
@@ -326,6 +341,7 @@ function endRound() {
 
     game.phase = GamePhase.ROUND_END;
     clearAllTimers();
+    stopGoTimer();
     updateFireButtons();
 
     updateCountdown('END');
@@ -350,6 +366,7 @@ function endRound() {
 function initGame() {
     game.reset();
     hideGameOver();
+    stopGoTimer();
     updateHP(1);
     updateHP(2);
     updateCountdown('READY');
@@ -357,6 +374,8 @@ function initGame() {
     updateMessage('시작 버튼을 눌러주세요!');
     showStun(1, false);
     showStun(2, false);
+    DOM.players[1].stunBar.style.width = '0%';
+    DOM.players[2].stunBar.style.width = '0%';
     updateFireButtons();
     updateStartButton();
 }
@@ -366,7 +385,71 @@ function initGame() {
 // ============================================
 function showStun(playerNum, show) {
     const dom = DOM.players[playerNum];
+    dom.section.classList.toggle('stunned', show);
     dom.stun.classList.toggle('show', show);
+
+    if (!show) {
+        dom.stunBar.style.width = '0%';
+    }
+}
+
+function animateStunBar(playerNum) {
+    const player = game.players[playerNum];
+    const dom = DOM.players[playerNum];
+
+    if (game.stunAnimationFrames[playerNum]) {
+        cancelAnimationFrame(game.stunAnimationFrames[playerNum]);
+    }
+
+    function updateBar() {
+        if (!player.stunned || !player.stunStartTime) {
+            dom.stunBar.style.width = '0%';
+            return;
+        }
+
+        const elapsed = Date.now() - player.stunStartTime;
+        const remaining = Math.max(0, CONFIG.STUN_DURATION - elapsed);
+        const percent = (remaining / CONFIG.STUN_DURATION) * 100;
+
+        dom.stunBar.style.width = `${percent}%`;
+
+        if (remaining > 0) {
+            game.stunAnimationFrames[playerNum] = requestAnimationFrame(updateBar);
+        }
+    }
+
+    updateBar();
+}
+
+function startGoTimer() {
+    DOM.goTimerContainer.classList.add('active');
+    game.goStartTime = Date.now();
+
+    const circumference = 2 * Math.PI * 45;
+
+    function updateTimer() {
+        const elapsed = Date.now() - game.goStartTime;
+        const remaining = Math.max(0, CONFIG.GO_DURATION - elapsed);
+        const progress = remaining / CONFIG.GO_DURATION;
+
+        const offset = circumference * (1 - progress);
+        DOM.goTimerProgress.style.strokeDashoffset = offset;
+
+        if (remaining > 0 && game.phase === GamePhase.GO) {
+            game.goAnimationFrame = requestAnimationFrame(updateTimer);
+        }
+    }
+
+    updateTimer();
+}
+
+function stopGoTimer() {
+    DOM.goTimerContainer.classList.remove('active');
+    if (game.goAnimationFrame) {
+        cancelAnimationFrame(game.goAnimationFrame);
+        game.goAnimationFrame = null;
+    }
+    DOM.goTimerProgress.style.strokeDashoffset = 0;
 }
 
 function showShotEffect(playerNum, type, damage = 0) {
@@ -384,13 +467,13 @@ function showShotEffect(playerNum, type, damage = 0) {
     DOM.container.classList.remove('shake');
     void DOM.container.offsetWidth;
     DOM.container.classList.add('shake');
-    setTimeout(() => DOM.container.classList.remove('shake'), 400);
+    setTimeout(() => DOM.container.classList.remove('shake'), 500);
 
     // 피격 효과
     targetDom.section.classList.remove('hit');
     void targetDom.section.offsetWidth;
     targetDom.section.classList.add('hit');
-    setTimeout(() => targetDom.section.classList.remove('hit'), 300);
+    setTimeout(() => targetDom.section.classList.remove('hit'), 400);
 
     // 데미지 표시
     if (damage > 0) {
@@ -405,10 +488,15 @@ function showShotEffect(playerNum, type, damage = 0) {
     void DOM.flash.offsetWidth;
     if (type === 'clean') {
         DOM.flash.classList.add('flash-clean');
-        setTimeout(() => DOM.flash.classList.remove('flash-clean'), 200);
+        setTimeout(() => DOM.flash.classList.remove('flash-clean'), 150);
     } else {
         DOM.flash.classList.add('flash-dirty');
-        setTimeout(() => DOM.flash.classList.remove('flash-dirty'), 150);
+        setTimeout(() => DOM.flash.classList.remove('flash-dirty'), 120);
+    }
+
+    // 진동 (지원되는 경우)
+    if (navigator.vibrate) {
+        navigator.vibrate(type === 'clean' ? [50, 30, 100] : [30, 20, 50]);
     }
 }
 
@@ -433,7 +521,6 @@ DOM.startBtn.addEventListener('click', () => {
     }
 });
 
-// 시작 버튼 터치
 DOM.startBtn.addEventListener('touchstart', (e) => {
     e.preventDefault();
     if (game.phase === GamePhase.READY) {
@@ -445,7 +532,6 @@ DOM.startBtn.addEventListener('touchstart', (e) => {
 DOM.players[1].fireBtn.addEventListener('click', () => handleShot(1));
 DOM.players[2].fireBtn.addEventListener('click', () => handleShot(2));
 
-// 터치 이벤트 (빠른 반응)
 DOM.players[1].fireBtn.addEventListener('touchstart', (e) => {
     e.preventDefault();
     handleShot(1);
@@ -456,9 +542,7 @@ DOM.players[2].fireBtn.addEventListener('touchstart', (e) => {
 });
 
 // 재시작 버튼
-DOM.restartBtn.addEventListener('click', () => {
-    initGame();
-});
+DOM.restartBtn.addEventListener('click', () => initGame());
 DOM.restartBtn.addEventListener('touchstart', (e) => {
     e.preventDefault();
     initGame();

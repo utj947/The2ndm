@@ -3,7 +3,8 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>The2nd - 모바일 결투</title>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -12,7 +13,6 @@
     <div class="game-container">
         <!-- ========== 상단: 상대편 영역 (전체 180도 회전) ========== -->
         <div class="player-section opponent-section">
-            <!-- 나와 동일한 순서: 이름 → 이모티콘 → 체력 → 발사 -->
             <div class="player-info">
                 <span class="player-label">PLAYER 2</span>
                 <div class="cowboy" id="player2-emoji">🤠</div>
@@ -20,7 +20,12 @@
                     <div class="hp-fill" id="hp2"></div>
                     <span class="hp-text" id="hp2-text">100</span>
                 </div>
-                <div class="stun-indicator" id="stun2">😵 STUNNED</div>
+                <div class="stun-container">
+                    <div class="stun-indicator" id="stun2">😵 STUNNED</div>
+                    <div class="stun-gauge">
+                        <div class="stun-bar" id="stun-bar2"></div>
+                    </div>
+                </div>
             </div>
             <button class="fire-button" id="fire-btn2">🔫 발사!</button>
             <div class="shot-indicator" id="shot2"></div>
@@ -30,14 +35,22 @@
         <!-- ========== 중앙: 게임 정보 영역 ========== -->
         <div class="center-section">
             <div class="round-info" id="round-info">ROUND 1</div>
-            <div class="countdown" id="countdown">READY</div>
+            <div class="countdown-wrapper">
+                <div class="countdown" id="countdown">READY</div>
+                <!-- GO 타이머 -->
+                <div class="go-timer-container" id="go-timer-container">
+                    <svg class="go-timer-svg" viewBox="0 0 100 100">
+                        <circle class="go-timer-bg" cx="50" cy="50" r="45" />
+                        <circle class="go-timer-progress" id="go-timer-progress" cx="50" cy="50" r="45" />
+                    </svg>
+                </div>
+            </div>
             <div class="game-message" id="game-message">시작 버튼을 눌러주세요</div>
             <button class="start-button" id="start-btn">🤠 결투 시작!</button>
         </div>
 
         <!-- ========== 하단: 내 영역 ========== -->
         <div class="player-section my-section">
-            <!-- 이름 → 이모티콘 → 체력 → 발사 순서 -->
             <div class="player-info">
                 <span class="player-label">PLAYER 1</span>
                 <div class="cowboy" id="player1-emoji">🤠</div>
@@ -45,7 +58,12 @@
                     <div class="hp-fill" id="hp1"></div>
                     <span class="hp-text" id="hp1-text">100</span>
                 </div>
-                <div class="stun-indicator" id="stun1">😵 STUNNED</div>
+                <div class="stun-container">
+                    <div class="stun-indicator" id="stun1">😵 STUNNED</div>
+                    <div class="stun-gauge">
+                        <div class="stun-bar" id="stun-bar1"></div>
+                    </div>
+                </div>
             </div>
             <button class="fire-button" id="fire-btn1">🔫 발사!</button>
             <div class="shot-indicator" id="shot1"></div>
