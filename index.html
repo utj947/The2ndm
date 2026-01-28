@@ -13,6 +13,7 @@
     <div class="game-container">
         <!-- ========== 상단: 상대편 영역 (전체 180도 회전) ========== -->
         <div class="player-section opponent-section">
+            <!-- 왼쪽: 플레이어 정보 -->
             <div class="player-info">
                 <span class="player-label">PLAYER 2</span>
                 <div class="cowboy" id="player2-emoji">🤠</div>
@@ -26,17 +27,25 @@
                         <div class="stun-bar" id="stun-bar2"></div>
                     </div>
                 </div>
+                <div class="shot-indicator" id="shot2"></div>
+                <div class="damage-popup" id="damage2"></div>
             </div>
-            <button class="fire-button" id="fire-btn2">🔫 발사!</button>
-            <div class="shot-indicator" id="shot2"></div>
-            <div class="damage-popup" id="damage2"></div>
+            <!-- 오른쪽: 큰 발사 버튼 -->
+            <button class="fire-button" id="fire-btn2">🔫<br>발사!</button>
         </div>
 
-        <!-- ========== 중앙: 게임 정보 영역 ========== -->
+        <!-- ========== 중앙: 게임 정보 영역 (3분할) ========== -->
         <div class="center-section">
-            <div class="round-info" id="round-info">ROUND 1</div>
-            <div class="countdown-wrapper">
-                <div class="countdown" id="countdown">READY</div>
+            <!-- 왼쪽: 상대방용 카운트다운 (180도 회전) -->
+            <div class="countdown-side opponent-countdown">
+                <div class="countdown" id="countdown-opponent">READY</div>
+                <div class="round-info" id="round-info-opponent">ROUND 1</div>
+            </div>
+
+            <!-- 가운데: 버튼 및 메시지 -->
+            <div class="center-controls">
+                <button class="start-button" id="start-btn">🤠<br>결투 시작!</button>
+                <div class="game-message" id="game-message">시작!</div>
                 <!-- GO 타이머 -->
                 <div class="go-timer-container" id="go-timer-container">
                     <svg class="go-timer-svg" viewBox="0 0 100 100">
@@ -45,12 +54,17 @@
                     </svg>
                 </div>
             </div>
-            <div class="game-message" id="game-message">시작 버튼을 눌러주세요</div>
-            <button class="start-button" id="start-btn">🤠 결투 시작!</button>
+
+            <!-- 오른쪽: 나용 카운트다운 (정방향) -->
+            <div class="countdown-side my-countdown">
+                <div class="countdown" id="countdown-me">READY</div>
+                <div class="round-info" id="round-info-me">ROUND 1</div>
+            </div>
         </div>
 
         <!-- ========== 하단: 내 영역 ========== -->
         <div class="player-section my-section">
+            <!-- 왼쪽: 플레이어 정보 -->
             <div class="player-info">
                 <span class="player-label">PLAYER 1</span>
                 <div class="cowboy" id="player1-emoji">🤠</div>
@@ -64,10 +78,11 @@
                         <div class="stun-bar" id="stun-bar1"></div>
                     </div>
                 </div>
+                <div class="shot-indicator" id="shot1"></div>
+                <div class="damage-popup" id="damage1"></div>
             </div>
-            <button class="fire-button" id="fire-btn1">🔫 발사!</button>
-            <div class="shot-indicator" id="shot1"></div>
-            <div class="damage-popup" id="damage1"></div>
+            <!-- 오른쪽: 큰 발사 버튼 -->
+            <button class="fire-button" id="fire-btn1">🔫<br>발사!</button>
         </div>
 
         <!-- 게임 오버 오버레이 -->

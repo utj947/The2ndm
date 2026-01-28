@@ -1,6 +1,6 @@
 /* ============================================
    The2nd - 모바일 버전 스타일
-   3영역: 상대(위), 게임정보(중앙), 나(아래)
+   새 레이아웃: 좌우 분할 + 큰 카운트다운
    ============================================ */
 
 * {
@@ -15,7 +15,6 @@ html,
 body {
     height: 100%;
     height: 100dvh;
-    /* Dynamic viewport height for mobile */
     overflow: hidden;
     touch-action: manipulation;
     font-family: 'Courier New', monospace;
@@ -24,7 +23,7 @@ body {
 }
 
 /* ============================================
-   메인 컨테이너 - 3영역 분할
+   메인 컨테이너
    ============================================ */
 .game-container {
     width: 100%;
@@ -37,19 +36,18 @@ body {
 }
 
 /* ============================================
-   플레이어 영역 (상단/하단)
+   플레이어 영역 (상단/하단) - 좌우 분할
    ============================================ */
 .player-section {
     flex: 1;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
-    justify-content: center;
-    padding: 10px;
+    justify-content: space-between;
+    padding: 8px 10px;
     position: relative;
-    gap: 8px;
     min-height: 0;
-    /* Prevent flex overflow */
+    gap: 10px;
 }
 
 /* 상대 영역 - 180도 회전 */
@@ -63,25 +61,26 @@ body {
     background: linear-gradient(0deg, rgba(139, 69, 19, 0.3) 0%, transparent 100%);
 }
 
-/* 플레이어 정보 */
+/* 플레이어 정보 (왼쪽) */
 .player-info {
+    flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 5px;
+    gap: 4px;
+    position: relative;
 }
 
 .player-label {
-    font-size: 0.85rem;
+    font-size: 0.75rem;
     font-weight: 700;
     color: #ffd700;
-    letter-spacing: 2px;
+    letter-spacing: 1px;
 }
 
 .cowboy {
-    font-size: 3rem;
-    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
-    transition: transform 0.1s;
+    font-size: 2.5rem;
+    filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.4));
 }
 
 .player-section.stunned .cowboy {
@@ -96,21 +95,22 @@ body {
     }
 
     25% {
-        transform: translateX(-4px);
+        transform: translateX(-3px);
     }
 
     75% {
-        transform: translateX(4px);
+        transform: translateX(3px);
     }
 }
 
 /* HP 바 */
 .hp-bar {
-    width: 140px;
-    height: 16px;
+    width: 100%;
+    max-width: 100px;
+    height: 14px;
     background: rgba(0, 0, 0, 0.5);
     border: 2px solid #8b4513;
-    border-radius: 8px;
+    border-radius: 7px;
     overflow: hidden;
     position: relative;
 }
@@ -145,7 +145,7 @@ body {
     left: 50%;
     transform: translate(-50%, -50%);
     font-weight: 700;
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     text-shadow: 1px 1px 2px black;
 }
 
@@ -154,12 +154,12 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 3px;
-    min-height: 30px;
+    gap: 2px;
+    min-height: 22px;
 }
 
 .stun-indicator {
-    font-size: 0.8rem;
+    font-size: 0.7rem;
     color: #ff6b35;
     font-weight: 700;
     opacity: 0;
@@ -171,8 +171,8 @@ body {
 }
 
 .stun-gauge {
-    width: 100px;
-    height: 6px;
+    width: 80px;
+    height: 5px;
     background: rgba(0, 0, 0, 0.5);
     border-radius: 3px;
     overflow: hidden;
@@ -185,172 +185,10 @@ body {
     transition: width 0.05s linear;
 }
 
-/* ============================================
-   발사 버튼
-   ============================================ */
-.fire-button {
-    width: 85%;
-    max-width: 220px;
-    padding: 15px;
-    font-size: 1.3rem;
-    font-weight: 700;
-    font-family: inherit;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: all 0.15s;
-
-    /* 기본: 비활성 */
-    background: #444;
-    color: #888;
-    box-shadow: 0 4px 0 #222;
-}
-
-.fire-button.active {
-    background: linear-gradient(180deg, #ff4444 0%, #cc0000 100%);
-    color: white;
-    box-shadow: 0 0 15px rgba(255, 68, 68, 0.6), 0 4px 0 #5c0a0a;
-}
-
-.fire-button.active:active {
-    transform: translateY(3px);
-    box-shadow: 0 1px 0 #5c0a0a;
-}
-
-.fire-button.disabled {
-    background: #333;
-    color: #555;
-    box-shadow: 0 2px 0 #222;
-}
-
-/* ============================================
-   중앙 게임 정보 영역
-   ============================================ */
-.center-section {
-    background: rgba(0, 0, 0, 0.85);
-    border-top: 2px solid #ffd700;
-    border-bottom: 2px solid #ffd700;
-    padding: 12px 15px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-    z-index: 10;
-    flex-shrink: 0;
-}
-
-.round-info {
-    font-size: 0.85rem;
-    color: #ffd700;
-    letter-spacing: 3px;
-}
-
-.countdown-wrapper {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.countdown {
-    font-size: 2.2rem;
-    font-weight: 700;
-    color: #e8d5b7;
-    text-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
-}
-
-.countdown.go {
-    color: #ff0000;
-    text-shadow: 0 0 25px rgba(255, 0, 0, 0.8);
-    animation: goPulse 0.3s ease-in-out infinite;
-}
-
-@keyframes goPulse {
-
-    0%,
-    100% {
-        transform: scale(1);
-    }
-
-    50% {
-        transform: scale(1.1);
-    }
-}
-
-/* GO 타이머 */
-.go-timer-container {
-    display: none;
-    width: 40px;
-    height: 40px;
-}
-
-.go-timer-container.active {
-    display: block;
-}
-
-.go-timer-svg {
-    width: 100%;
-    height: 100%;
-    transform: rotate(-90deg);
-}
-
-.go-timer-bg {
-    fill: none;
-    stroke: rgba(255, 255, 255, 0.2);
-    stroke-width: 8;
-}
-
-.go-timer-progress {
-    fill: none;
-    stroke: #ff0000;
-    stroke-width: 8;
-    stroke-linecap: round;
-    stroke-dasharray: 283;
-    stroke-dashoffset: 0;
-    transition: stroke-dashoffset 0.05s linear;
-}
-
-.game-message {
-    font-size: 0.8rem;
-    color: #e8d5b7;
-}
-
-.game-message.damage {
-    color: #ff6b35;
-    font-weight: 700;
-}
-
-/* 시작 버튼 */
-.start-button {
-    padding: 10px 20px;
-    font-size: 1rem;
-    font-weight: 700;
-    font-family: inherit;
-    background: linear-gradient(180deg, #ffd700 0%, #ff8c00 100%);
-    border: none;
-    border-radius: 8px;
-    color: #333;
-    cursor: pointer;
-    box-shadow: 0 3px 0 #8b4513;
-    transition: all 0.15s;
-}
-
-.start-button:active {
-    transform: translateY(2px);
-    box-shadow: 0 1px 0 #8b4513;
-}
-
-.start-button:disabled {
-    background: #666;
-    color: #999;
-    box-shadow: 0 2px 0 #333;
-}
-
-/* ============================================
-   이펙트
-   ============================================ */
+/* 발사 이펙트 */
 .shot-indicator {
     position: absolute;
-    font-size: 2.5rem;
+    font-size: 2rem;
     opacity: 0;
     pointer-events: none;
 }
@@ -389,7 +227,7 @@ body {
 
 .damage-popup {
     position: absolute;
-    font-size: 2rem;
+    font-size: 1.5rem;
     font-weight: 700;
     color: #ff0000;
     opacity: 0;
@@ -408,13 +246,213 @@ body {
     }
 
     50% {
-        transform: translateY(-15px) scale(1.2);
+        transform: translateY(-10px) scale(1.2);
     }
 
     100% {
         opacity: 0;
-        transform: translateY(-30px) scale(1);
+        transform: translateY(-20px) scale(1);
     }
+}
+
+/* ============================================
+   발사 버튼 (오른쪽, 크게)
+   ============================================ */
+.fire-button {
+    width: 100px;
+    height: 100%;
+    max-height: 120px;
+    font-size: 1.8rem;
+    font-weight: 700;
+    font-family: inherit;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: all 0.15s;
+    line-height: 1.2;
+    flex-shrink: 0;
+
+    /* 기본: 비활성 */
+    background: #444;
+    color: #888;
+    box-shadow: 0 5px 0 #222;
+}
+
+.fire-button.active {
+    background: linear-gradient(180deg, #ff4444 0%, #cc0000 100%);
+    color: white;
+    box-shadow: 0 0 20px rgba(255, 68, 68, 0.7), 0 5px 0 #5c0a0a;
+    animation: fireReady 0.5s ease-in-out infinite;
+}
+
+@keyframes fireReady {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.03);
+    }
+}
+
+.fire-button.active:active {
+    transform: scale(0.95) translateY(3px);
+    box-shadow: 0 2px 0 #5c0a0a;
+    animation: none;
+}
+
+.fire-button.disabled {
+    background: #333;
+    color: #555;
+    box-shadow: 0 3px 0 #222;
+}
+
+/* ============================================
+   중앙 게임 정보 영역 (3분할)
+   ============================================ */
+.center-section {
+    background: rgba(0, 0, 0, 0.9);
+    border-top: 3px solid #ffd700;
+    border-bottom: 3px solid #ffd700;
+    padding: 8px 5px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 10;
+    flex-shrink: 0;
+    min-height: 100px;
+}
+
+/* 카운트다운 영역 (좌/우) */
+.countdown-side {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+}
+
+/* 상대방용 카운트다운 - 180도 회전 */
+.opponent-countdown {
+    transform: rotate(180deg);
+}
+
+/* 카운트다운 숫자 - 크게! */
+.countdown {
+    font-size: 3rem;
+    font-weight: 700;
+    color: #e8d5b7;
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+    line-height: 1;
+}
+
+.countdown.go {
+    color: #ff0000;
+    text-shadow: 0 0 30px rgba(255, 0, 0, 0.9);
+    animation: goPulse 0.25s ease-in-out infinite;
+}
+
+@keyframes goPulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.15);
+    }
+}
+
+.round-info {
+    font-size: 0.65rem;
+    color: #ffd700;
+    letter-spacing: 1px;
+}
+
+/* 중앙 컨트롤 */
+.center-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 0 10px;
+}
+
+.game-message {
+    font-size: 0.7rem;
+    color: #e8d5b7;
+    text-align: center;
+}
+
+.game-message.damage {
+    color: #ff6b35;
+    font-weight: 700;
+}
+
+/* 시작 버튼 */
+.start-button {
+    padding: 12px 15px;
+    font-size: 1rem;
+    font-weight: 700;
+    font-family: inherit;
+    background: linear-gradient(180deg, #ffd700 0%, #ff8c00 100%);
+    border: none;
+    border-radius: 10px;
+    color: #333;
+    cursor: pointer;
+    box-shadow: 0 4px 0 #8b4513;
+    transition: all 0.15s;
+    line-height: 1.2;
+}
+
+.start-button:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #8b4513;
+}
+
+.start-button:disabled {
+    background: #666;
+    color: #999;
+    box-shadow: 0 2px 0 #333;
+}
+
+/* GO 타이머 */
+.go-timer-container {
+    display: none;
+    width: 35px;
+    height: 35px;
+}
+
+.go-timer-container.active {
+    display: block;
+}
+
+.go-timer-svg {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+}
+
+.go-timer-bg {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.2);
+    stroke-width: 8;
+}
+
+.go-timer-progress {
+    fill: none;
+    stroke: #ff0000;
+    stroke-width: 8;
+    stroke-linecap: round;
+    stroke-dasharray: 283;
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 0.05s linear;
 }
 
 /* ============================================
@@ -468,21 +506,21 @@ body {
 }
 
 #restart-btn {
-    padding: 12px 35px;
-    font-size: 1.2rem;
+    padding: 15px 40px;
+    font-size: 1.3rem;
     font-weight: 700;
     font-family: inherit;
     background: linear-gradient(180deg, #ffd700 0%, #ff8c00 100%);
     border: none;
-    border-radius: 8px;
+    border-radius: 10px;
     color: #333;
     cursor: pointer;
-    box-shadow: 0 3px 0 #8b4513;
+    box-shadow: 0 4px 0 #8b4513;
 }
 
 #restart-btn:active {
     transform: translateY(2px);
-    box-shadow: 0 1px 0 #8b4513;
+    box-shadow: 0 2px 0 #8b4513;
 }
 
 /* ============================================
@@ -526,7 +564,7 @@ body {
     }
 }
 
-/* 화면 흔들림 - 강화 */
+/* 화면 흔들림 */
 .game-container.shake {
     animation: containerShake 0.5s ease-out;
 }
@@ -539,39 +577,31 @@ body {
     }
 
     10% {
-        transform: translateX(-12px) translateY(-3px);
-    }
-
-    20% {
-        transform: translateX(12px) translateY(3px);
-    }
-
-    30% {
         transform: translateX(-10px) translateY(-2px);
     }
 
-    40% {
+    20% {
         transform: translateX(10px) translateY(2px);
     }
 
+    30% {
+        transform: translateX(-8px) translateY(-1px);
+    }
+
+    40% {
+        transform: translateX(8px) translateY(1px);
+    }
+
     50% {
-        transform: translateX(-6px) translateY(-1px);
+        transform: translateX(-5px);
     }
 
     60% {
-        transform: translateX(6px) translateY(1px);
-    }
-
-    70% {
-        transform: translateX(-3px);
-    }
-
-    80% {
-        transform: translateX(3px);
+        transform: translateX(5px);
     }
 }
 
-/* 플레이어 피격 - 강화 */
+/* 플레이어 피격 */
 .player-section.hit {
     animation: hitFlash 0.4s ease-out;
 }
@@ -598,7 +628,6 @@ body {
     }
 }
 
-/* 스턴 상태일 때 배경 */
 .player-section.stunned {
     background: linear-gradient(0deg, rgba(255, 100, 50, 0.2) 0%, transparent 100%);
 }

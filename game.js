@@ -1,7 +1,6 @@
 /**
  * The2nd - 모바일 버전 게임 로직
- * 터치/클릭 기반 발사, 세로 3영역 레이아웃
- * 스턴 게이지, GO 타이머, 타격감 강화
+ * 새 레이아웃: 좌우 분할 + 양방향 카운트다운
  */
 
 // ============================================
@@ -65,8 +64,11 @@ class GameState {
 // ============================================
 const DOM = {
     container: document.querySelector('.game-container'),
-    countdown: document.getElementById('countdown'),
-    roundInfo: document.getElementById('round-info'),
+    // 양방향 카운트다운
+    countdownMe: document.getElementById('countdown-me'),
+    countdownOpponent: document.getElementById('countdown-opponent'),
+    roundInfoMe: document.getElementById('round-info-me'),
+    roundInfoOpponent: document.getElementById('round-info-opponent'),
     message: document.getElementById('game-message'),
     gameOver: document.getElementById('game-over'),
     winnerText: document.getElementById('winner-text'),
@@ -135,9 +137,12 @@ function updateHP(playerNum) {
     }
 }
 
+// 양쪽 카운트다운 동시 업데이트
 function updateCountdown(text, isGo = false) {
-    DOM.countdown.textContent = text;
-    DOM.countdown.classList.toggle('go', isGo);
+    DOM.countdownMe.textContent = text;
+    DOM.countdownOpponent.textContent = text;
+    DOM.countdownMe.classList.toggle('go', isGo);
+    DOM.countdownOpponent.classList.toggle('go', isGo);
 }
 
 function updateMessage(text, isDamage = false) {
@@ -164,22 +169,25 @@ function updateFireButtons() {
     });
 }
 
+// 양쪽 라운드 정보 동시 업데이트
 function updateRoundInfo() {
-    DOM.roundInfo.textContent = `ROUND ${game.round}`;
+    const text = `ROUND ${game.round}`;
+    DOM.roundInfoMe.textContent = text;
+    DOM.roundInfoOpponent.textContent = text;
 }
 
 function updateStartButton() {
     if (game.phase === GamePhase.READY) {
         DOM.startBtn.disabled = false;
-        DOM.startBtn.textContent = '🤠 결투 시작!';
+        DOM.startBtn.innerHTML = '🤠<br>결투 시작!';
     } else if (game.phase === GamePhase.ROUND_END) {
         DOM.startBtn.disabled = false;
-        DOM.startBtn.textContent = '🔄 다음 라운드!';
+        DOM.startBtn.innerHTML = '🔄<br>다음 라운드!';
     } else if (game.phase === GamePhase.GAME_OVER) {
         DOM.startBtn.disabled = true;
     } else {
         DOM.startBtn.disabled = true;
-        DOM.startBtn.textContent = '⏳ 진행 중...';
+        DOM.startBtn.innerHTML = '⏳<br>진행 중...';
     }
 }
 
@@ -233,14 +241,14 @@ function handleShot(shooterNum) {
         showShotEffect(shooterNum, 'clean', damage);
         applyDamage(targetNum, damage);
         applyStun(targetNum);
-        updateMessage(`P${shooterNum}: 클린샷! 🤠 ${damage}!`, true);
+        updateMessage(`P${shooterNum}: 클린샷! 🤠`, true);
         stopGoTimer();
     } else {
         const damage = randomInt(CONFIG.DIRTY_SHOT_DAMAGE_MIN, CONFIG.DIRTY_SHOT_DAMAGE_MAX);
         showShotEffect(shooterNum, 'dirty', damage);
         applyDamage(targetNum, damage);
         applyStun(targetNum);
-        updateMessage(`P${shooterNum}: 더티샷! 🐀 ${damage}!`, true);
+        updateMessage(`P${shooterNum}: 더티샷! 🐀`, true);
     }
 
     checkGameOver();
@@ -288,7 +296,7 @@ function clearAllTimers() {
 function startCountdown() {
     if (game.phase !== GamePhase.READY) return;
 
-    updateMessage('결투 준비...');
+    updateMessage('준비...');
     updateStartButton();
 
     const startDelay = getRandomStartDelay();
@@ -296,7 +304,7 @@ function startCountdown() {
     game.countdownTimers.push(setTimeout(() => {
         game.phase = GamePhase.COUNTDOWN_3;
         updateCountdown('3');
-        updateMessage('3...');
+        updateMessage('');
         updateFireButtons();
     }, startDelay));
 
@@ -305,7 +313,6 @@ function startCountdown() {
         if (game.phase !== GamePhase.GAME_OVER) {
             game.phase = GamePhase.COUNTDOWN_2;
             updateCountdown('2');
-            updateMessage('2...');
         }
     }, delay2));
 
@@ -314,7 +321,6 @@ function startCountdown() {
         if (game.phase !== GamePhase.GAME_OVER) {
             game.phase = GamePhase.COUNTDOWN_1;
             updateCountdown('1');
-            updateMessage('1...');
         }
     }, delay3));
 
@@ -323,7 +329,7 @@ function startCountdown() {
         if (game.phase !== GamePhase.GAME_OVER) {
             game.phase = GamePhase.GO;
             updateCountdown('GO!', true);
-            updateMessage('발사!!!', true);
+            updateMessage('');
             updateFireButtons();
             startGoTimer();
 
@@ -345,7 +351,7 @@ function endRound() {
     updateFireButtons();
 
     updateCountdown('END');
-    updateMessage(`라운드 ${game.round} 종료!`);
+    updateMessage(`R${game.round} 종료`);
 
     setTimeout(() => {
         if (game.phase === GamePhase.GAME_OVER) return;
@@ -354,7 +360,7 @@ function endRound() {
         game.resetRound();
         updateRoundInfo();
         updateCountdown('READY');
-        updateMessage('시작 버튼을 눌러주세요!');
+        updateMessage('시작!');
         updateStartButton();
         updateFireButtons();
     }, CONFIG.ROUND_END_DELAY);
@@ -371,7 +377,7 @@ function initGame() {
     updateHP(2);
     updateCountdown('READY');
     updateRoundInfo();
-    updateMessage('시작 버튼을 눌러주세요!');
+    updateMessage('시작!');
     showStun(1, false);
     showStun(2, false);
     DOM.players[1].stunBar.style.width = '0%';
@@ -494,7 +500,7 @@ function showShotEffect(playerNum, type, damage = 0) {
         setTimeout(() => DOM.flash.classList.remove('flash-dirty'), 120);
     }
 
-    // 진동 (지원되는 경우)
+    // 진동
     if (navigator.vibrate) {
         navigator.vibrate(type === 'clean' ? [50, 30, 100] : [30, 20, 50]);
     }
@@ -528,7 +534,7 @@ DOM.startBtn.addEventListener('touchstart', (e) => {
     }
 });
 
-// 발사 버튼 (터치/클릭)
+// 발사 버튼
 DOM.players[1].fireBtn.addEventListener('click', () => handleShot(1));
 DOM.players[2].fireBtn.addEventListener('click', () => handleShot(2));
 
