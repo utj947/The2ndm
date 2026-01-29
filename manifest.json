@@ -1,0 +1,22 @@
+{
+    "name": "The2nd - 결투 게임",
+    "short_name": "The2nd",
+    "description": "2인용 로컬 결투 게임",
+    "start_url": "index.html",
+    "display": "standalone",
+    "orientation": "portrait",
+    "background_color": "#1a0a00",
+    "theme_color": "#1a0a00",
+    "icons": [
+        {
+            "src": "icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}

@@ -719,5 +719,52 @@ DOM.emojiPicker.addEventListener('click', (e) => {
     }
 });
 
+// ============================================
+// 터치 제스처 차단 (줌, 스와이프, 스크롤 방지)
+// ============================================
+(function () {
+    const options = { passive: false };
+
+    // 멀티터치(2개 이상 손가락) 동작 차단
+    function preventMultiTouch(e) {
+        if (e.touches && e.touches.length > 1 && e.cancelable) {
+            e.preventDefault();
+        }
+    }
+
+    // 멀티터치 이벤트 차단 (줌, 회전 등)
+    document.addEventListener('touchmove', preventMultiTouch, options);
+    document.addEventListener('touchstart', preventMultiTouch, options);
+
+    // iOS 핀치 줌 제스처 차단
+    document.addEventListener('gesturestart', (e) => {
+        if (e.cancelable) e.preventDefault();
+    }, options);
+    document.addEventListener('gesturechange', (e) => {
+        if (e.cancelable) e.preventDefault();
+    }, options);
+    document.addEventListener('gestureend', (e) => {
+        if (e.cancelable) e.preventDefault();
+    }, options);
+
+    // 우클릭(롱탭) 컨텍스트 메뉴 차단
+    document.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        return false;
+    });
+
+    // 더블탭 줌 차단
+    let lastTouchEnd = 0;
+    document.addEventListener('touchend', (e) => {
+        const now = Date.now();
+        if (now - lastTouchEnd <= 300) {
+            e.preventDefault();
+        }
+        lastTouchEnd = now;
+    }, false);
+
+    console.log('Touch gesture blocking enabled');
+})();
+
 // 게임 초기화 실행
 initGame();

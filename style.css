@@ -9,6 +9,7 @@
     box-sizing: border-box;
     -webkit-tap-highlight-color: transparent;
     user-select: none;
+    -webkit-user-select: none;
 }
 
 html,
@@ -16,10 +17,17 @@ body {
     height: 100%;
     height: 100dvh;
     overflow: hidden;
-    touch-action: manipulation;
+    touch-action: none; /* 모든 브라우저 터치 제스처 차단 */
+    -webkit-touch-callout: none; /* iOS 롱탭 메뉴 차단 */
+    overscroll-behavior: none; /* 스크롤 바운스 차단 */
     font-family: 'Courier New', monospace;
     background: linear-gradient(180deg, #1a0a00 0%, #3d1a00 50%, #0d0501 100%);
     color: #e8d5b7;
+}
+
+/* 게임 컨테이너에도 터치 차단 적용 */
+.game-container {
+    touch-action: none;
 }
 
 /* ============================================
